@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Mapboxoid</string>
+    <string name="location_permissions_not_granted">Location permissions were not granted.</string>
+    <string name="location_permissions_explanation">To view your current location.</string>
+</resources>
