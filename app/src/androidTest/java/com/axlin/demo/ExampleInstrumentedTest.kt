@@ -1,4 +1,4 @@
-package com.alhaythamapps.mapboxoid
+package com.axlin.demo
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

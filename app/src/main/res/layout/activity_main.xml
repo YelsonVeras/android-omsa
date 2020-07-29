@@ -12,5 +12,8 @@
         android:layout_height="match_parent"
         app:mapbox_cameraTargetLat="30.013056"
         app:mapbox_cameraTargetLng="31.208853"
-        app:mapbox_cameraZoom="12" />
+        app:mapbox_cameraTilt="0.0"
+        app:mapbox_cameraZoom="15"
+        app:mapbox_cameraZoomMax="20"
+        app:mapbox_uiRotateGestures="false" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.alhaythamapps.mapboxoid
+package com.axlin.demo
 
 import org.junit.Test
 

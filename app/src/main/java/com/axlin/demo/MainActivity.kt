@@ -1,10 +1,18 @@
-package com.alhaythamapps.mapboxoid
+package com.axlin.demo
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
+import android.widget.Toast.makeText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
+import com.mapbox.mapboxsdk.annotations.Icon
+import com.mapbox.mapboxsdk.annotations.IconFactory
+import com.mapbox.mapboxsdk.annotations.MarkerOptions
+import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
 import com.mapbox.mapboxsdk.location.modes.CameraMode
 import com.mapbox.mapboxsdk.location.modes.RenderMode
@@ -14,8 +22,10 @@ import com.mapbox.mapboxsdk.maps.Style
 
 
 class MainActivity : AppCompatActivity() {
+
     private var mapView: MapView? = null
-    private var mapbox: MapboxMap? = null
+    private var mapBox: MapboxMap? = null
+
     private var permissionsManager: PermissionsManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,29 +35,57 @@ class MainActivity : AppCompatActivity() {
         mapView = findViewById(R.id.mapView)
         mapView?.onCreate(savedInstanceState)
 
-        mapView?.getMapAsync { mapbox ->
-            this.mapbox = mapbox
-
-            mapbox.setStyle(Style.MAPBOX_STREETS) { style ->
+        mapView?.getMapAsync { mapBox ->
+            this.mapBox = mapBox
+            mapBox.setStyle(Style.MAPBOX_STREETS) { style ->
                 enableLocation(style)
+                enabledGestures()
+                addMarkStation()
             }
         }
     }
 
     private fun enableLocation(style: Style) {
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
-            mapbox?.locationComponent?.activateLocationComponent(
+            mapBox?.locationComponent?.activateLocationComponent(
                 LocationComponentActivationOptions.builder(this, style).build()
             )
-            mapbox?.locationComponent?.isLocationComponentEnabled = true
-            mapbox?.locationComponent?.cameraMode = CameraMode.TRACKING
-            mapbox?.locationComponent?.renderMode = RenderMode.COMPASS
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
+            }
+            mapBox?.locationComponent?.isLocationComponentEnabled = true
+            mapBox?.locationComponent?.cameraMode = CameraMode.TRACKING_GPS_NORTH
+            mapBox?.locationComponent?.renderMode = RenderMode.COMPASS
         } else {
             permissionsManager = PermissionsManager(LocationPermissionsListener()).apply {
                 requestLocationPermissions(
                     this@MainActivity
                 )
             }
+        }
+    }
+
+    private fun enabledGestures() {
+        mapBox?.uiSettings?.isDoubleTapGesturesEnabled = false
+    }
+
+    private fun addMarkStation() {
+
+        mapBox?.addMarker(
+            MarkerOptions()
+                .position(LatLng(19.429094, -70.694826))
+                .title("Los jasmines Station")
+        )
+        mapBox?.setOnMarkerClickListener { marker ->
+            makeText(this, marker.title, Toast.LENGTH_LONG).show()
+            true
         }
     }
 
@@ -61,26 +99,24 @@ class MainActivity : AppCompatActivity() {
 
     inner class LocationPermissionsListener : PermissionsListener {
         override fun onExplanationNeeded(permissionsToExplain: MutableList<String>?) {
-            Toast.makeText(
+            makeText(
                 this@MainActivity,
                 R.string.location_permissions_explanation,
                 Toast.LENGTH_LONG
-            )
-                .show()
+            ).show()
         }
 
         override fun onPermissionResult(granted: Boolean) {
             if (granted) {
-                mapbox?.getStyle() { style ->
+                mapBox?.getStyle() { style ->
                     enableLocation(style)
                 }
             } else {
-                Toast.makeText(
+                makeText(
                     this@MainActivity,
                     R.string.location_permissions_not_granted,
                     Toast.LENGTH_LONG
-                )
-                    .show()
+                ).show()
             }
         }
     }
