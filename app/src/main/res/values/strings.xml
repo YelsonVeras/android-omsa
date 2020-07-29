@@ -2,4 +2,9 @@
     <string name="app_name">Canada</string>
     <string name="location_permissions_not_granted">Location permissions were not granted.</string>
     <string name="location_permissions_explanation">To view your current location.</string>
+    <string name="signup_login_hint">Already have an account? Sign In</string>
+    <string name="login_signup_hint">Don\'t have an account? Sign Up</string>
+    <string name="login_username_hint">Username</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login">Login</string>
 </resources>
