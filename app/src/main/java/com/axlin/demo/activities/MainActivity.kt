@@ -8,6 +8,9 @@ import android.widget.Toast.makeText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.axlin.demo.R
+import com.axlin.demo.models.responses.StationResponse
+import com.axlin.demo.network.RestService
+import com.axlin.demo.tasks.BuildStationTask
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
@@ -39,7 +42,10 @@ class MainActivity : AppCompatActivity() {
             mapBox.setStyle(Style.MAPBOX_STREETS) { style ->
                 enableLocation(style)
                 enabledGestures()
-                addMarkStation()
+//                addMarkStation()
+                RestService.service
+                    .getStations()
+                    .enqueue(BuildStationTask(this))
             }
         }
     }
@@ -75,8 +81,14 @@ class MainActivity : AppCompatActivity() {
         mapBox?.uiSettings?.isDoubleTapGesturesEnabled = false
     }
 
-    private fun addMarkStation() {
-
+    fun addMarkStation(stations: List<StationResponse>?) {
+        stations?.forEach {
+            mapBox?.addMarker(
+                MarkerOptions()
+                    .position(LatLng(it.latitud.toDouble(), it.longitud.toDouble()))
+                    .title(it.address)
+            )
+        }
         mapBox?.addMarker(
             MarkerOptions()
                 .position(LatLng(19.429094, -70.694826))

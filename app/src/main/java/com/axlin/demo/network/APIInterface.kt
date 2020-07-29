@@ -13,5 +13,5 @@ interface APIInterface {
     fun login(@Body personRequest: PersonRequest): Call<PersonResponse>
 
     @GET("/mobile/stations")
-    fun getStations(@Body personRequest: PersonRequest): Call<List<StationResponse>>
+    fun getStations(): Call<List<StationResponse>>
 }
